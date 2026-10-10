@@ -1,0 +1,10 @@
+form_handler_id,action,external_field,prospect_field,data_format,required,new_external_field
+48213,add,job_title,Job Title,Text,,
+48213,add,phone_number,Phone,Text,yes,
+48213,edit,email,,,yes,
+48213,edit,company_name,,,,company
+48213,remove,lead_source,,,,
+48219,add,website,Website,Text,no,
+48219,add,country,Country,Text,,
+48230,add,industry,Industry,Text,,
+48230,add,bad_one,Not A Field,Text,,

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pardot Toolkit</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header class="hd"><img src="icons/icon32.png" width="32" height="32" alt=""><div><b>Pardot Toolkit</b><span>Account Engagement helper</span></div></header>
+<nav class="tabs">
+  <button class="tab on" data-tab="fields">Fields</button>
+  <button class="tab" data-tab="batch">Batch</button>
+  <button class="tab" data-tab="search">Search</button>
+  <button class="tab" data-tab="settings">Settings</button>
+</nav>
+
+<!-- 1 · FIELDS -->
+<section class="panel on" id="p-fields">
+  <div class="bd">
+    <div class="row">
+      <div class="grow"><label class="lb" for="hid">Form handler ID</label><input class="in" id="hid" inputmode="numeric" placeholder="e.g. 48213"></div>
+      <button class="btn" id="load">Load fields</button>
+    </div>
+    <div class="sub"><button id="sub-edit" class="on">Add / Edit</button><button id="sub-rm">Remove</button></div>
+
+    <div id="v-edit">
+      <div id="flist"></div>
+      <div class="editor">
+        <label class="lb">Add or edit?</label>
+        <div class="seg" id="modeSeg"><button data-v="new" class="on">New field</button><button data-v="edit">Edit field</button></div>
+        <div class="mut" id="editHint"></div>
+        <div class="row">
+          <div class="grow"><label class="lb" for="fname">External field name</label><input class="in" id="fname"></div>
+          <div class="grow"><label class="lb" for="pfield">Prospect field</label><input class="in" id="pfield" placeholder="label or API name"></div>
+        </div>
+        <div class="row">
+          <div class="grow"><label class="lb" for="fmt">Data format</label><input class="in" id="fmt" placeholder="blank = keep (Text)"></div>
+        </div>
+        <label class="lb">Required</label>
+        <div class="seg" id="reqSeg"><button data-v="no">Not required</button><button data-v="yes">Required</button><button data-v="leave" id="reqLeave">Leave as is</button></div>
+        <div class="row c"><button class="btn g" id="queue">+ Queue field</button><span class="mut" id="qinfo"></span></div>
+      </div>
+    </div>
+
+    <div id="v-rm" hidden>
+      <div class="mut" id="rmHint">Load a form handler to see its fields.</div>
+      <div id="rmlist"></div>
+      <div class="warn">Removing is final in Pardot. Removed fields are listed in the result below.</div>
+    </div>
+    <div id="log"></div>
+  </div>
+  <div class="ft"><button class="btn g" id="discard">Discard</button><button class="btn grow2" id="primary">Save changes</button></div>
+</section>
+
+<!-- 2 · BATCH -->
+<section class="panel" id="p-batch">
+  <div class="bd">
+    <div class="drop" id="drop">
+      <b>Drop CSV here or paste rows</b>
+      <div class="mut">form_handler_id, action, external_field, prospect_field, data_format, required, new_external_field</div>
+      <div class="mut">action = add / edit / remove. Blank <b>required</b> uses the default from Settings (Not required).</div>
+      <div class="row c"><label class="btn g file">Choose CSV<input type="file" id="csvfile" accept=".csv,.tsv,.txt" hidden></label><button class="btn g" id="tpl">Download template</button></div>
+    </div>
+    <textarea class="in ta" id="csvtext" placeholder="Paste CSV or rows copied from a spreadsheet"></textarea>
+    <div class="card" id="bsum" hidden></div>
+    <div id="bprog" hidden>
+      <label class="lb" id="bplabel"></label>
+      <div class="bar"><div id="bfill"></div></div>
+    </div>
+    <div id="blist"></div>
+  </div>
+  <div class="ft"><button class="btn g" id="bpause">Pause</button><button class="btn" id="bstart">Start batch</button><button class="btn g" id="bdl">Result CSV</button></div>
+</section>
+
+<!-- 3 · SEARCH -->
+<section class="panel" id="p-search">
+  <div class="bd">
+    <div class="row"><div class="grow"><input class="in" id="q" placeholder="Search Pardot" aria-label="Search"></div><button class="btn" id="go">Search</button></div>
+    <div class="chips" id="chips">
+      <button class="chip on" data-v="all">All</button><button class="chip" data-v="prospects">Prospects</button><button class="chip" data-v="visitors">Visitors</button>
+      <button class="chip" data-v="campaigns">Campaigns</button><button class="chip" data-v="formHandlers">Form handlers</button><button class="chip" data-v="forms">Forms</button>
+    </div>
+    <div id="sres"></div>
+  </div>
+</section>
+
+<!-- 4 · SETTINGS -->
+<section class="panel" id="p-settings">
+  <div class="bd">
+    <div><label class="lb" for="s-base">Pardot base URL</label><input class="in" id="s-base"></div>
+    <div><label class="lb" for="s-tpl">Form handler URL template</label><input class="in" id="s-tpl"></div>
+    <div class="row">
+      <div class="grow"><label class="lb" for="s-par">Parallel handlers</label><input class="in" id="s-par" inputmode="numeric"></div>
+      <div class="grow"><label class="lb" for="s-del">Delay between saves (ms)</label><input class="in" id="s-del" inputmode="numeric"></div>
+    </div>
+    <div><label class="lb">Required value when none is given (CSV or new field)</label>
+      <div class="seg" id="s-req"><button data-v="no">Not required</button><button data-v="yes">Required</button><button data-v="leave">Leave as is</button></div>
+      <div class="mut">Default is Not required, so the checkbox stays unticked unless you say otherwise.</div></div>
+    <label class="card chk"><input type="checkbox" id="s-notify"><b>Desktop notification when a run ends</b></label>
+    <label class="card chk"><input type="checkbox" id="s-close"><b>Close background tabs after saving</b></label>
+    <details><summary>Search URL templates</summary>
+      <div class="mut">Use {Q} for the search text. Adjust these to match your Pardot account.</div>
+      <div id="s-search"></div>
+    </details>
+  </div>
+  <div class="ft"><button class="btn g" id="s-reset">Reset</button><button class="btn grow2" id="s-save">Save settings</button></div>
+</section>
+
+<script src="common.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
